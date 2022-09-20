@@ -1,0 +1,100 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group 'io.github.jayanthjj'
+archivesBaseName = "gradle-arithmetic"
+version '1.0.0'
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing{
+    publications{
+
+        mavenJava(MavenPublication){
+            groupId = 'io.github.jayanthjj'
+            artifactId = 'gradle-arithmetic'
+            version = '1.0.0'
+            from components.java
+
+            pom{
+                name =  'gradle-arithmetic'
+                description = 'Sample Calculator App'
+                url = 'https://github.com/jayanthjj/gradle-arithmetic'
+
+                scm {
+                    connection = 'scm:git:git://github.com/jayanthjj/arithmetic.git'
+                    developerConnection = 'scm:git:ssh://github.com:jayanthjj/arithmetic.git'
+                    url = 'http://github.com/jayanthjj/arithmetic'
+                }
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'jayanthjj'
+                        name = 'Jayanth jayadevan'
+                        email = 'jayanth.j737@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = project.properties["ossrhUsername"]
+                password = project.properties["ossrhPassword"]
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            credentials {
+                username = project.properties["ossrhUsername"]
+                password = project.properties["ossrhPassword"]
+            }
+        }
+    }
+}
